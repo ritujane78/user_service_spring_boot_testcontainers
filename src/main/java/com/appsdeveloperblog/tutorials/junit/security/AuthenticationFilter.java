@@ -3,10 +3,13 @@ package com.appsdeveloperblog.tutorials.junit.security;
 import com.appsdeveloperblog.tutorials.junit.service.UsersService;
 import com.appsdeveloperblog.tutorials.junit.shared.SpringApplicationContext;
 import com.appsdeveloperblog.tutorials.junit.shared.UserDto;
-import com.appsdeveloperblog.tutorials.junit.ui.request.UserLoginRequestModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,11 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
@@ -61,11 +62,17 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         String userName = ((UserDetails) auth.getPrincipal()).getUsername();
 
+        byte[] secretKeyBytes = SecurityConstants.TOKEN_SECRET.getBytes();
+        SecretKey secretKey = Keys.hmacShaKeyFor(secretKeyBytes);
+        Instant now = Instant.now();
+
         String token = Jwts.builder()
-                .setSubject(userName)
-                .setExpiration(new Date(System.currentTimeMillis() + (long) 864000000))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
+                .subject(userName)
+                .expiration(new Date(System.currentTimeMillis() + (long) 864000000))
+                .issuedAt(Date.from(now))
+                .signWith(secretKey)
                 .compact();
+
         UsersService userService = (UsersService) SpringApplicationContext.getBean("usersService");
         UserDto userDto = userService.getUser(userName);
 

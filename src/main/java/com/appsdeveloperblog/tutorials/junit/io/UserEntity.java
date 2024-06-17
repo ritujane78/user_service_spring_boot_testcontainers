@@ -1,6 +1,7 @@
 package com.appsdeveloperblog.tutorials.junit.io;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 @Entity
@@ -9,7 +10,7 @@ public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 5313493413859894403L;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable=false, unique=true)
