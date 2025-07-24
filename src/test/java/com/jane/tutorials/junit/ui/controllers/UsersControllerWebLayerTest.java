@@ -23,11 +23,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(controllers = UsersController.class,
-excludeAutoConfiguration = {SecurityAutoConfiguration.class})
+        excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 //@AutoConfigureMockMvc(addFilters = false)
 //@MockBean({UsersServiceImpl.class})
 public class UsersControllerWebLayerTest {
@@ -123,5 +125,4 @@ public class UsersControllerWebLayerTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(),
                 result.getResponse().getStatus(), "HTTP Status code is not set to 400");
     }
-
 }

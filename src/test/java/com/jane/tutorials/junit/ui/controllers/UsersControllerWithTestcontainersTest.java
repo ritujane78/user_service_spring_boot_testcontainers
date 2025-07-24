@@ -27,16 +27,17 @@ public class UsersControllerWithTestcontainersTest {
 //    @Container
     @ServiceConnection
     private static MySQLContainer mySQLContainer = new MySQLContainer<>("mysql:8.4.0");
+    //            .withDatabaseName("photo_app")
+    //            .withUsername("root")
+    //            .withPassword("root");
 
+// Default values are test
     static {
         mySQLContainer.start();
     }
     @Autowired
     private TestRestTemplate testRestTemplate;
     private String authorizationToken;
-//            .withDatabaseName("photo_app")
-//            .withUsername("root")
-//            .withPassword("root");
 
 //    @DynamicPropertySource
 //    private static void overrideProperties(DynamicPropertyRegistry registry){
